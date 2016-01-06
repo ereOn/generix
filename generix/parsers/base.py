@@ -4,7 +4,6 @@ The base parser.
 
 from voluptuous import (
     Any,
-    Object,
     Required,
     Schema,
 )
