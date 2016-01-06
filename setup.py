@@ -21,7 +21,16 @@ generix is a flexible and extensible code generator tool.
     ]),
     install_requires=[
         'six==1.9.0',
+        'Jinja2==2.8',
+        'click==6.2',
+        'PyYAML==3.11',
+        'voluptuous==0.8.8',
     ],
+    entry_points={
+        'console_scripts': [
+            'gxgen = generix.scripts:gxgen',
+        ],
+    },
     test_suite='tests',
     classifiers=[
         'Intended Audience :: Developers',

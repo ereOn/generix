@@ -1,0 +1,20 @@
+types:
+  - name: Person
+    fields:
+      - name: name
+        type: string
+      - name: age
+        type: integer
+
+functions:
+  - name: create_person
+    arguments:
+      - name: result
+        type: Person
+        mode: out
+      - name: name
+        type: string
+        mode: in
+      - name: age
+        type: integer
+        mode: in
