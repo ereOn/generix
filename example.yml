@@ -1,4 +1,6 @@
 types:
+  - name: string
+  - name: integer
   - name: Person
     fields:
       - name: name
