@@ -62,12 +62,5 @@ def get_parser_from_file(file):
     return parser_class()
 
 
-def parse_files(*files):
-    return [
-        get_parser_from_file(file).load_from_file(file)
-        for file in files
-    ]
-
-
-def merge_definitions(*definitions):
-    return definitions[0]
+def parse_file(file):
+    return get_parser_from_file(file).load_from_file(file)

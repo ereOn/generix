@@ -4,10 +4,7 @@ Command line scripts.
 
 import click
 
-from .parsers import (
-    merge_definitions,
-    parse_files,
-)
+from .parsers import parse_file
 
 
 def hl(obj):
@@ -28,16 +25,15 @@ def pdebug(msg, *args, **kwargs):
 
 @click.command(help="Generate code from a definition file.")
 @click.option('-d', '--debug', is_flag=True)
-@click.argument('definition_files', nargs=-1, type=click.File())
-def gxgen(debug, definition_files):
+@click.argument('definition_file', type=click.File())
+def gxgen(debug, definition_file):
     pinfo(
-        "Parsing definition file(s): {definition_filenames}.",
-        definition_filenames=', '.join(hl(df.name) for df in definition_files),
+        "Parsing definition file: {definition_filename}.",
+        definition_filename=definition_file.name,
     )
 
     try:
-        definitions = parse_files(*definition_files)
-        definition = merge_definitions(*definitions)
+        definition = parse_file(definition_file)
 
         pinfo(
             "Found {types_count} type(s) and {functions_count} function(s).",
