@@ -9,14 +9,18 @@ from .parsers import (
     parse_files,
 )
 
+
 def hl(obj):
     return click.style(str(obj), fg='yellow', bold=True)
+
 
 def identifier(obj):
     return click.style(str(obj), fg='cyan', bold=True)
 
+
 def pinfo(msg, *args, **kwargs):
     click.secho(str(msg).format(*args, **kwargs), fg='white')
+
 
 def pdebug(msg, *args, **kwargs):
     click.secho(str(msg).format(*args, **kwargs), fg='black', bold=True)

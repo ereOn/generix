@@ -8,10 +8,6 @@ from voluptuous import (
     Schema,
 )
 
-from ..exceptions import (
-    DuplicateTypeError,
-    UnknownTypeError,
-)
 from ..objects import (
     Argument,
     Definition,
