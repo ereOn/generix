@@ -29,7 +29,7 @@ def pdebug(msg, *args, **kwargs):
 def gxgen(debug, definition_file):
     pinfo(
         "Parsing definition file: {definition_filename}.",
-        definition_filename=definition_file.name,
+        definition_filename=hl(definition_file.name),
     )
 
     try:
