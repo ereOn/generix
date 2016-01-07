@@ -4,9 +4,11 @@ A JSON file parser.
 
 import json
 
+from .base import BaseParser
 
-class JsonParser(object):
+
+class JsonParser(BaseParser):
     extensions = {'.json'}
 
     def load_from_file(self, file):
-        return json.load(file)
+        return self.validate(json.load(file))

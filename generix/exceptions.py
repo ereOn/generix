@@ -2,8 +2,6 @@
 Exceptions.
 """
 
-from voluptuous import Invalid
-
 
 class NoParserError(RuntimeError):
     """
@@ -22,7 +20,7 @@ class NoParserError(RuntimeError):
         self.extensions = extensions
 
 
-class DuplicateTypeError(Invalid):
+class DuplicateTypeError(RuntimeError):
     """
     A type was defined more than once.
     """
@@ -39,7 +37,7 @@ class DuplicateTypeError(Invalid):
         self.current_type = current_type
 
 
-class UnknownTypeError(Invalid):
+class UnknownTypeError(RuntimeError):
     """
     An unknown type was specified.
     """
