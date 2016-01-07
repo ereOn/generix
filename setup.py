@@ -30,6 +30,10 @@ generix is a flexible and extensible code generator tool.
         'console_scripts': [
             'gxgen = generix.scripts:gxgen',
         ],
+        'generix_parsers': [
+            'yaml = generix.parsers.yaml:YamlParser',
+            'json = generix.parsers.json:JsonParser',
+        ],
     },
     test_suite='tests',
     classifiers=[
