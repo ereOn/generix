@@ -42,14 +42,17 @@ class UnknownTypeError(RuntimeError):
     An unknown type was specified.
     """
 
-    def __init__(self, type_name, types):
+    def __init__(self, type_name, context, types):
         super(UnknownTypeError, self).__init__(
-            "Unknown type {type_name!r} was not found in: {types}".format(
+            "Unknown type {type_name!r} in definition of {context}. Known "
+            "types are: {types}".format(
                 type_name=type_name,
+                context=context,
                 types=list(types),
             ),
         )
         self.type_name = type_name
+        self.context = context
         self.types = types
 
 

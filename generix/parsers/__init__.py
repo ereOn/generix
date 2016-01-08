@@ -7,10 +7,17 @@ import pkg_resources
 import warnings
 
 from ..exceptions import (
-    NoParserError,
     CyclicDependencyError,
+    NoParserError,
+    UnknownTypeError,
 )
-from ..objects import Definition
+from ..objects import (
+    Definition,
+    Type,
+    Function,
+    Field,
+    Argument,
+)
 
 
 def get_parser_class_map():
@@ -80,6 +87,55 @@ def merge_definitions(*definitions):
     return definition
 
 
+def resolve_types(definition):
+    types_map = {}
+
+    def get_type(type_name, context):
+        type = types_map.get(type_name)
+
+        if type is None:
+            raise UnknownTypeError(
+                type_name=type_name,
+                context=context,
+                types=list(types_map),
+            )
+
+        return type
+
+    def resolve_types_in_type(type):
+        type = Type(
+            name=type.name,
+            fields=list(map(resolve_types_in_field, type.fields)),
+        )
+        types_map[type.name] = type
+        return type
+
+    def resolve_types_in_field(field):
+        return Field(
+            name=field.name,
+            type=get_type(field.type, context=field),
+        )
+
+    def resolve_types_in_function(function):
+        return Function(
+            name=function.name,
+            arguments=list(map(resolve_types_in_argument, function.arguments)),
+        )
+
+    def resolve_types_in_argument(argument):
+        return Argument(
+            name=argument.name,
+            type=get_type(argument.type, context=argument),
+            mode=argument.mode,
+        )
+
+    return Definition(
+        requires=definition.requires,
+        types=list(map(resolve_types_in_type, definition.types)),
+        functions=list(map(resolve_types_in_function, definition.functions)),
+    )
+
+
 def parse_file(file, requires=()):
     name = os.path.normpath(os.path.abspath(file.name))
 
@@ -88,11 +144,11 @@ def parse_file(file, requires=()):
 
     dir_path = os.path.dirname(name)
     definition = get_parser_from_file(file).load_from_file(file)
-
-    return merge_definitions(*[
+    definition = merge_definitions(*[
         parse_file(
             open(os.path.join(dir_path, require)),
             requires=requires + (name,),
         )
         for require in definition.requires
     ] + [definition])
+    return resolve_types(definition)
