@@ -51,3 +51,17 @@ class UnknownTypeError(RuntimeError):
         )
         self.type_name = type_name
         self.types = types
+
+
+class CyclicDependencyError(RuntimeError):
+    """
+    An infinite recursion was detected in the requires.
+    """
+
+    def __init__(self, stack):
+        super(CyclicDependencyError, self).__init__(
+            "An infinite recursion was detected in the `requires` statements. The cycle is: {stack}".format(
+                stack=' -> '.join(stack),
+            ),
+        )
+        self.stack = stack

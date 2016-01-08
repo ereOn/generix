@@ -6,7 +6,10 @@ import os
 import pkg_resources
 import warnings
 
-from ..exceptions import NoParserError
+from ..exceptions import (
+    NoParserError,
+    CyclicDependencyError,
+)
 from ..objects import Definition
 
 
@@ -79,13 +82,17 @@ def merge_definitions(*definitions):
 
 def parse_file(file, requires=()):
     name = os.path.normpath(os.path.abspath(file.name))
+
+    if name in requires:
+        raise CyclicDependencyError(stack=requires + (name,))
+
     dir_path = os.path.dirname(name)
     definition = get_parser_from_file(file).load_from_file(file)
 
     return merge_definitions(definition, *[
         parse_file(
             open(os.path.join(dir_path, require)),
-            requires=requires + tuple(name),
+            requires=requires + (name,),
         )
         for require in definition.requires
     ])
