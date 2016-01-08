@@ -3,8 +3,10 @@ Command line scripts.
 """
 
 import click
+import os
 
 from .parsers import parse_file
+from .exceptions import CyclicDependencyError
 
 
 def hl(obj):
@@ -21,6 +23,10 @@ def pinfo(msg, *args, **kwargs):
 
 def pdebug(msg, *args, **kwargs):
     click.secho(str(msg).format(*args, **kwargs), fg='black', bold=True)
+
+
+def perror(msg, *args, **kwargs):
+    click.secho(str(msg).format(*args, **kwargs), fg='red', bold=True)
 
 
 @click.command(help="Generate code from a definition file.")
@@ -55,6 +61,16 @@ def gxgen(debug, definition_file):
                     for function in definition.functions,
                 ),
             )
+
+    except CyclicDependencyError as ex:
+        perror(
+            "An infinite recursion was detected in the `requires` statements. "
+            "The cycle is: {cycle}",
+            cycle=' -> '.join(map(hl, map(os.path.relpath, ex.cycle))),
+        )
+        raise click.ClickException(
+            "Can't continue until you solve the cyclic dependency problem.",
+        )
 
     except Exception as ex:
         if debug:

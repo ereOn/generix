@@ -84,15 +84,15 @@ def parse_file(file, requires=()):
     name = os.path.normpath(os.path.abspath(file.name))
 
     if name in requires:
-        raise CyclicDependencyError(stack=requires + (name,))
+        raise CyclicDependencyError(cycle=requires + (name,))
 
     dir_path = os.path.dirname(name)
     definition = get_parser_from_file(file).load_from_file(file)
 
-    return merge_definitions(definition, *[
+    return merge_definitions(*[
         parse_file(
             open(os.path.join(dir_path, require)),
             requires=requires + (name,),
         )
         for require in definition.requires
-    ])
+    ] + [definition])

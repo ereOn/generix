@@ -58,10 +58,11 @@ class CyclicDependencyError(RuntimeError):
     An infinite recursion was detected in the requires.
     """
 
-    def __init__(self, stack):
+    def __init__(self, cycle):
         super(CyclicDependencyError, self).__init__(
-            "An infinite recursion was detected in the `requires` statements. The cycle is: {stack}".format(
-                stack=' -> '.join(stack),
+            "An infinite recursion was detected in the `requires` statements. "
+            "The cycle is: {cycle}".format(
+                cycle=' -> '.join(cycle),
             ),
         )
-        self.stack = stack
+        self.cycle = cycle
