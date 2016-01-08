@@ -53,6 +53,7 @@ class BaseParser(object):
 
     def parse_definition(self, value):
         kwargs = Schema({
+            Required('requires', default=[]): [str],
             Required('types', default=[]): [self.parse_type],
             Required('functions', default=[]): [self.parse_function],
         })(value)

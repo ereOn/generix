@@ -7,6 +7,7 @@ import pkg_resources
 import warnings
 
 from ..exceptions import NoParserError
+from ..objects import Definition
 
 
 def get_parser_class_map():
@@ -62,5 +63,29 @@ def get_parser_from_file(file):
     return parser_class()
 
 
-def parse_file(file):
-    return get_parser_from_file(file).load_from_file(file)
+def merge_definitions(*definitions):
+    definitions = iter(definitions)
+    definition = next(definitions)
+
+    for d in definitions:
+        definition = Definition(
+            requires=[],
+            types=definition.types + d.types,
+            functions=definition.functions + d.functions,
+        )
+
+    return definition
+
+
+def parse_file(file, requires=()):
+    name = os.path.normpath(os.path.abspath(file.name))
+    dir_path = os.path.dirname(name)
+    definition = get_parser_from_file(file).load_from_file(file)
+
+    return merge_definitions(definition, *[
+        parse_file(
+            open(os.path.join(dir_path, require)),
+            requires=requires + tuple(name),
+        )
+        for require in definition.requires
+    ])

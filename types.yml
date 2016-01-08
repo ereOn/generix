@@ -1,0 +1,3 @@
+types:
+  - name: string
+  - name: integer
