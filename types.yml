@@ -1,3 +1,4 @@
-types:
-  - name: string
-  - name: integer
+definition:
+  types:
+    - name: string
+    - name: integer

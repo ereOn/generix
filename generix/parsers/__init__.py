@@ -6,18 +6,7 @@ import os
 import pkg_resources
 import warnings
 
-from ..exceptions import (
-    CyclicDependencyError,
-    NoParserError,
-    UnknownTypeError,
-)
-from ..objects import (
-    Definition,
-    Type,
-    Function,
-    Field,
-    Argument,
-)
+from ..exceptions import NoParserError
 
 
 def get_parser_class_map():
@@ -73,33 +62,6 @@ def get_parser_from_file(file):
     return parser_class()
 
 
-def merge_definitions(*definitions):
-    definitions = iter(definitions)
-    definition = next(definitions)
-
-    for d in definitions:
-        definition = Definition(
-            requires=[],
-            types=definition.types + d.types,
-            functions=definition.functions + d.functions,
-        )
-
-    return definition
-
-
-def parse_file(file, requires=()):
-    name = os.path.normpath(os.path.abspath(file.name))
-
-    if name in requires:
-        raise CyclicDependencyError(cycle=requires + (name,))
-
-    dir_path = os.path.dirname(name)
-    definition = get_parser_from_file(file).load_from_file(file)
-    definition = merge_definitions(*[
-        parse_file(
-            open(os.path.join(dir_path, require)),
-            requires=requires + (name,),
-        )
-        for require in definition.requires
-    ] + [definition])
-    return definition
+def parse_file(file):
+    parser = get_parser_from_file(file)
+    return parser.parse(file)

@@ -27,33 +27,14 @@ class DuplicateTypeError(RuntimeError):
 
     def __init__(self, type, current_type):
         super(DuplicateTypeError, self).__init__(
-            "Can't redefine type {type.name!r} as {type} since it was already "
-            "defined as {current_type}.".format(
+            "Can't redefine type {type.name!r} as {type!r} since it was "
+            "already defined as {current_type!r}.".format(
                 type=type,
                 current_type=current_type,
             ),
         )
         self.type = type
         self.current_type = current_type
-
-
-class UnknownTypeError(RuntimeError):
-    """
-    An unknown type was specified.
-    """
-
-    def __init__(self, type_name, context, types):
-        super(UnknownTypeError, self).__init__(
-            "Unknown type {type_name!r} in definition of {context}. Known "
-            "types are: {types}".format(
-                type_name=type_name,
-                context=context,
-                types=list(types),
-            ),
-        )
-        self.type_name = type_name
-        self.context = context
-        self.types = types
 
 
 class CyclicDependencyError(RuntimeError):
