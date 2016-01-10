@@ -89,6 +89,22 @@ class ParsableType(object):
         )
 
 
+def parse_field(data):
+    return Field.parse(data)
+
+
+def parse_type(data):
+    return Type.parse(data)
+
+
+def parse_function(data):
+    return Function.parse(data)
+
+
+def parse_argument(data):
+    return Argument.parse(data)
+
+
 class Field(ParsableType):
     id = 'name'
     schema = {
@@ -108,7 +124,8 @@ class Type(ParsableType):
     id = 'name'
     schema = {
         Required('name', msg="The name attribute is mandatory for types"): str,
-        Required('fields', default=[]): [Field.parse],
+        Required('fields', default=[]): [parse_field],
+        Required('functions', default=[]): [parse_function],
         Extra: object,
     }
 
@@ -133,7 +150,7 @@ class Function(ParsableType):
             'name',
             msg="The name attribute is mandatory for functions",
         ): str,
-        Required('arguments', default=[]): [Argument.parse],
+        Required('arguments', default=[]): [parse_argument],
         Extra: object,
     }
 
@@ -143,8 +160,8 @@ class Definition(ParsableType):
         '_types_map',
     )
     schema = {
-        Required('types', default=[]): [Type.parse],
-        Required('functions', default=[]): [Function.parse],
+        Required('types', default=[]): [parse_type],
+        Required('functions', default=[]): [parse_function],
     }
 
     @classmethod
