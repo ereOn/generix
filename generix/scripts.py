@@ -3,10 +3,8 @@ Command line scripts.
 """
 
 import click
-import os
 
 from .parsers import parse_file
-from .exceptions import CyclicDependencyError
 
 
 def hl(obj):
@@ -34,43 +32,23 @@ def perror(msg, *args, **kwargs):
 @click.argument('definition_file', type=click.File())
 def gxgen(debug, definition_file):
     pinfo(
-        "Parsing definition file: {definition_filename}.",
-        definition_filename=hl(definition_file.name),
+        "Parsing definition file: {definition_file_name}.",
+        definition_file_name=hl(definition_file.name),
     )
 
     try:
         definition = parse_file(definition_file)
 
         pinfo(
-            "Found {types_count} type(s) and {functions_count} function(s).",
-            types_count=hl(len(definition.types)),
-            functions_count=hl(len(definition.functions)),
+            "Successfully loaded definition file at {definition_file_name}.",
+            definition_file_name=hl(definition_file.name),
         )
 
         if debug:
-            pinfo(
-                "Found types are as follow:\n- {types}",
-                types='\n- '.join(
-                    identifier(type.name) for type in definition.types,
-                ),
+            pdebug(
+                "Definition file is as follow:\n{definition}",
+                definition=definition,
             )
-            pinfo(
-                "Found functions are as follow:\n- {functions}",
-                functions='\n- '.join(
-                    identifier(function.name)
-                    for function in definition.functions,
-                ),
-            )
-
-    except CyclicDependencyError as ex:
-        perror(
-            "An infinite recursion was detected in the `requires` statements. "
-            "The cycle is: {cycle}",
-            cycle=' -> '.join(map(hl, map(os.path.relpath, ex.cycle))),
-        )
-        raise click.ClickException(
-            "Can't continue until you solve the cyclic dependency problem.",
-        )
 
     except Exception as ex:
         if debug:

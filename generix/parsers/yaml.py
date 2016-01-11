@@ -10,5 +10,8 @@ from .base import BaseParser
 class YamlParser(BaseParser):
     extensions = {'.yml', '.yaml'}
 
-    def read_data(self, file):
+    def load(self, file):
         return yaml.load(file)
+
+    def loads(self, s):
+        return yaml.loads(s)

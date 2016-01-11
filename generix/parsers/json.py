@@ -10,5 +10,8 @@ from .base import BaseParser
 class JsonParser(BaseParser):
     extensions = {'.json'}
 
-    def read_data(self, file):
+    def load(self, file):
         return json.load(file)
+
+    def loads(self, s):
+        return json.loads(s)

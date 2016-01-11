@@ -49,19 +49,23 @@ def get_parser_class_map():
 parser_class_map = get_parser_class_map()
 
 
-def get_parser_from_file(file):
-    extension = os.path.splitext(file.name)[-1]
+def get_parser_from_file_name(file_name):
+    extension = os.path.splitext(file_name)[-1]
     parser_class = parser_class_map.get(extension)
 
     if not parser_class:
         raise NoParserError(
-            filename=file.name,
+            filename=file_name,
             extensions=set(parser_class_map),
         )
 
     return parser_class()
 
 
+def get_parser_from_file(file):
+    return get_parser_from_file_name(file_name=file.name)
+
+
 def parse_file(file):
     parser = get_parser_from_file(file)
-    return parser.parse(file)
+    return parser.load(file)
