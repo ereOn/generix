@@ -1,0 +1,6 @@
+targets:
+  header:
+    source: header.hpp
+    destination: "{{ class.name }}.hpp"
+    scope: classes
+
