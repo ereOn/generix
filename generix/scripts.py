@@ -30,20 +30,40 @@ def perror(msg, *args, **kwargs):
 
 
 @click.command(help="Generate code from a definition file.")
-@click.option('-d', '--debug', is_flag=True)
-@click.argument('templates-root', type=click.Path(exists=True))
-@click.argument('definition-file', type=click.File())
+@click.option(
+    '-d',
+    '--debug',
+    is_flag=True,
+    help="Enable debug output and traceback logging. Use this when something "
+    "is not working and you really can't figure out what from the error "
+    "messages only.",
+)
 @click.option(
     '-o',
     '--output-root',
     type=click.Path(exists=False),
     default='output',
+    help="The default output directory to put generated files in. If no "
+    "output directory is specified, the default `output` is used.",
 )
-def gxgen(debug, templates_root, definition_file, output_root):
-    pinfo(
-        "Parsing definition file: {definition_file_name}.",
-        definition_file_name=hl(definition_file.name),
-    )
+@click.option(
+    '-t',
+    '--target',
+    'targets',
+    type=str,
+    multiple=True,
+    help="A target to build. Can be repeated multiple times. If no target "
+    "is specified, the default targets are used. If no default targets are "
+    "defined, all targets are used.",
+)
+@click.argument('templates-root', type=click.Path(exists=True))
+@click.argument('definition-file', type=click.File())
+def gxgen(debug, output_root, targets, templates_root, definition_file):
+    if debug:
+        pdebug(
+            "Parsing definition file: {definition_file_name}.",
+            definition_file_name=hl(definition_file.name),
+        )
 
     try:
         definition = parse_file(definition_file)
@@ -72,8 +92,33 @@ def gxgen(debug, templates_root, definition_file, output_root):
         except IOError:
             pass
 
-        for target_name in templates_manager.targets:
-            templates_manager.render(target_name, definition)
+        if not targets:
+            targets = templates_manager.default_targets
+
+        for index, target_name in enumerate(targets):
+            progress = float(index) / len(targets)
+            pinfo(
+                "[{progress:2d}%] Generating target `{target_name}`.",
+                progress=int(progress * 100.0),
+                target_name=hl(target_name),
+            )
+
+            for destination_file_name, content in templates_manager.render(
+                target_name,
+                definition,
+            ):
+                output_file_name = os.path.join(
+                    output_root,
+                    destination_file_name,
+                )
+                pinfo(
+                    "Writing {output_file_name}.",
+                    output_file_name=hl(output_file_name),
+                )
+
+                with open(output_file_name, 'w') as destination_file:
+                    destination_file.write(content)
+
 
     except Exception as ex:
         if debug:

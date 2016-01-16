@@ -1,11 +1,13 @@
 classes:
-  - Person:
-    name: Person
-    fields:
-      private:
-        - name:
-          name: name
-          type: std::string
-        - age:
-          name: age
-          type: uint32_t
+- name: User
+  fields:
+    private:
+    - name: username
+      type: std::string
+- name: Person
+  fields:
+    private:
+    - name: name
+      type: std::string
+    - name: age
+      type: uint32_t

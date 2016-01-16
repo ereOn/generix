@@ -25,6 +25,7 @@ generix is a flexible and extensible code generator tool.
         'click==6.2',
         'PyYAML==3.11',
         'voluptuous==0.8.8',
+        'ply==3.8',
     ],
     entry_points={
         'console_scripts': [
