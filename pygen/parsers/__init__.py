@@ -13,13 +13,13 @@ def get_parser_class_map():
     result = {}
 
     for entry_point in pkg_resources.iter_entry_points(
-        group='generix_parsers',
+        group='pygen_parsers',
     ):
         try:
             class_ = entry_point.load()
         except ImportError as ex:
             warnings.warn(
-                "Exception while loading generix parser %r. It won't be "
+                "Exception while loading pygen parser %r. It won't be "
                 "available. Exception was: %s" % (entry_point.name, ex),
                 RuntimeWarning,
             )

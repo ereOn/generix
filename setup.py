@@ -4,17 +4,18 @@ from setuptools import (
 )
 
 setup(
-    name='generix',
+    name='pygen',
     author='Julien Kauffmann',
     author_email='julien.kauffmann@freelan.org',
     maintainer='Julien Kauffmann',
     maintainer_email='julien.kauffmann@freelan.org',
     version=open('VERSION').read().strip(),
+    url='http://ereOn.github.io/pygen',
     description=(
         "A flexible code generator tool."
     ),
     long_description="""\
-generix is a flexible and extensible code generator tool.
+pygen is a flexible and extensible code generator tool.
 """,
     packages=find_packages(exclude=[
         'tests',
@@ -29,11 +30,11 @@ generix is a flexible and extensible code generator tool.
     ],
     entry_points={
         'console_scripts': [
-            'gxgen = generix.scripts:gxgen',
+            'pygen = pygen.scripts:pygen',
         ],
-        'generix_parsers': [
-            'yaml = generix.parsers.yaml:YamlParser',
-            'json = generix.parsers.json:JsonParser',
+        'pygen_parsers': [
+            'yaml = pygen.parsers.yaml:YamlParser',
+            'json = pygen.parsers.json:JsonParser',
         ],
     },
     test_suite='tests',
