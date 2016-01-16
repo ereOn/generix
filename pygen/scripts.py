@@ -4,6 +4,7 @@ Command line scripts.
 
 import click
 import os
+import yaml
 
 from .parsers import parse_file
 from .templates import TemplatesManager
@@ -13,20 +14,12 @@ def hl(obj):
     return click.style(str(obj), fg='yellow', bold=True)
 
 
-def identifier(obj):
-    return click.style(str(obj), fg='cyan', bold=True)
-
-
 def pinfo(msg, *args, **kwargs):
     click.secho(str(msg).format(*args, **kwargs), fg='white')
 
 
 def pdebug(msg, *args, **kwargs):
     click.secho(str(msg).format(*args, **kwargs), fg='black', bold=True)
-
-
-def perror(msg, *args, **kwargs):
-    click.secho(str(msg).format(*args, **kwargs), fg='red', bold=True)
 
 
 @click.command(help="Generate code from a definition file.")
@@ -76,7 +69,7 @@ def pygen(debug, output_root, targets, templates_root, definition_file):
         if debug:
             pdebug(
                 "Definition file is as follow:\n{definition}",
-                definition=definition,
+                definition=yaml.dump(definition),
             )
 
         pinfo(
@@ -89,13 +82,13 @@ def pygen(debug, output_root, targets, templates_root, definition_file):
 
         try:
             os.makedirs(output_root)
-        except IOError:
+        except OSError:
             pass
 
         if not targets:
             targets = templates_manager.default_targets
 
-        for index, target_name in enumerate(targets):
+        for index, target_name in enumerate(sorted(targets)):
             progress = float(index) / len(targets)
             pinfo(
                 "[{progress:3d}%] Generating target `{target_name}`.",
@@ -113,11 +106,11 @@ def pygen(debug, output_root, targets, templates_root, definition_file):
                 )
                 pinfo(
                     "Writing {output_file_name}.",
-                    output_file_name=hl(output_file_name),
+                    output_file_name=hl(output_file_name.replace('\\', '/')),
                 )
 
                 with open(output_file_name, 'w') as destination_file:
-                    destination_file.write(content)
+                    destination_file.write(content)  # pragma: no branch
 
         pinfo("[100%] Done.")
 

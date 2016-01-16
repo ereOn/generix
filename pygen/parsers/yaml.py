@@ -2,7 +2,11 @@
 A YAML file parser.
 """
 
+from __future__ import absolute_import
+
 import yaml
+
+from six import StringIO
 
 from .base import BaseParser
 
@@ -14,4 +18,4 @@ class YamlParser(BaseParser):
         return yaml.load(file)
 
     def loads(self, s):
-        return yaml.loads(s)
+        return yaml.load(StringIO(s))

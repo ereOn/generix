@@ -50,7 +50,11 @@ class TemplatesManager(object):
         targets = self.index['default_targets']
 
         if targets:
-            return targets
+            return {
+                target: value
+                for target, value in self.targets.items()
+                if target in targets
+            }
         else:
             return self.targets
 

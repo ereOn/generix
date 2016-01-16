@@ -21,7 +21,8 @@ pygen is a flexible and extensible code generator tool.
         'tests',
     ]),
     install_requires=[
-        'six==1.9.0',
+        'six==1.10.0',
+        'future==0.15.2',
         'Jinja2==2.8',
         'click==6.2',
         'PyYAML==3.11',

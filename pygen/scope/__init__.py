@@ -14,10 +14,18 @@ def parse_scope(value):
     :param value: The dotted path string.
     :returns: A `Scope` instance if `value` is a valid path.
     """
+    if not value:
+        return Scope()
+
     if not re.match('^[\w\d_-]+(\.[\w\d_-]+)*$', value):
         raise InvalidScope(value)
 
-    return Scope(scope=value.split('.'))
+    scope = [
+        int(x) if re.match('^\d+$', x) else x
+        for x in value.split('.')
+    ]
+
+    return Scope(scope=scope)
 
 
 class Scope(object):
@@ -30,7 +38,16 @@ class Scope(object):
 
         :param scope: A list of path components.
         """
-        self.scope = scope or []
+        self.scope = list(scope or [])
+
+    def __eq__(self, other):
+        if not isinstance(other, Scope):
+            return NotImplemented
+
+        return other.scope == self.scope
+
+    def __ne__(self, other):
+        return not self == other
 
     def __repr__(self):
         return 'Scope(%r)' % self.scope

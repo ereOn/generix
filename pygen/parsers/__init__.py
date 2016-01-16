@@ -6,7 +6,7 @@ import os
 import pkg_resources
 import warnings
 
-from ..exceptions import NoParserError
+from .exceptions import NoParserError
 
 
 def get_parser_class_map():
