@@ -2,8 +2,10 @@
 Scope exceptions.
 """
 
+from voluptuous import Invalid
 
-class InvalidScope(ValueError):
+
+class InvalidScope(Invalid):
     """
     An invalid scope was specified.
     """

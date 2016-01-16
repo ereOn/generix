@@ -2,8 +2,9 @@
 Scope manipulation.
 """
 
+import re
+
 from .exceptions import InvalidScope
-from .yacc import parser
 
 
 def parse_scope(value):
@@ -13,12 +14,10 @@ def parse_scope(value):
     :param value: The dotted path string.
     :returns: A `Scope` instance if `value` is a valid path.
     """
-    scope = parser.parse(value)
-
-    if scope is None:
+    if not re.match('^[\w\d_-]+(\.[\w\d_-]+)*$', value):
         raise InvalidScope(value)
 
-    return Scope(scope=scope)
+    return Scope(scope=value.split('.'))
 
 
 class Scope(object):
@@ -32,7 +31,6 @@ class Scope(object):
         :param scope: A list of path components.
         """
         self.scope = scope or []
-
 
     def __repr__(self):
         return 'Scope(%r)' % self.scope

@@ -58,7 +58,7 @@ def perror(msg, *args, **kwargs):
 )
 @click.argument('templates-root', type=click.Path(exists=True))
 @click.argument('definition-file', type=click.File())
-def gxgen(debug, output_root, targets, templates_root, definition_file):
+def pygen(debug, output_root, targets, templates_root, definition_file):
     if debug:
         pdebug(
             "Parsing definition file: {definition_file_name}.",
@@ -98,7 +98,7 @@ def gxgen(debug, output_root, targets, templates_root, definition_file):
         for index, target_name in enumerate(targets):
             progress = float(index) / len(targets)
             pinfo(
-                "[{progress:2d}%] Generating target `{target_name}`.",
+                "[{progress:3d}%] Generating target `{target_name}`.",
                 progress=int(progress * 100.0),
                 target_name=hl(target_name),
             )
@@ -119,6 +119,7 @@ def gxgen(debug, output_root, targets, templates_root, definition_file):
                 with open(output_file_name, 'w') as destination_file:
                     destination_file.write(content)
 
+        pinfo("[100%] Done.")
 
     except Exception as ex:
         if debug:
