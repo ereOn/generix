@@ -19,7 +19,7 @@ class Scope(object):
         :param value: The dotted path string.
         :returns: A `Scope` instance if `value` is a valid path.
         """
-        if not re.match('^([\w\d_-]+(\.[\w\d_-]+)*)?$', value):
+        if not re.match('^([\w\d_-]+(\.[\w\d_-]+)*(\.\.\.)?)?$', value):
             raise InvalidScope(value)
 
         scope = [
@@ -27,21 +27,25 @@ class Scope(object):
             for x in value.split('.') if x
         ]
 
-        return cls(scope=scope)
+        return cls(scope=scope, is_iterable=value.endswith('...'))
 
-    def __init__(self, scope=None):
+    def __init__(self, scope=None, is_iterable=False):
         """
         Creates a new scope.
 
         :param scope: A list of path components.
+        :param is_iterable: A boolean flag that indicates whether the scope
+            points to an iterable.
         """
         self.scope = list(scope or [])
+        self.is_iterable = is_iterable
 
     def __eq__(self, other):
         if not isinstance(other, Scope):
             return NotImplemented
 
-        return other.scope == self.scope
+        return (other.scope == self.scope) and \
+            (other.is_iterable == self.is_iterable)
 
     def __ne__(self, other):
         return not self == other
@@ -50,7 +54,7 @@ class Scope(object):
         return '.'.join(self.scope)
 
     def __repr__(self):
-        return 'Scope(%r)' % self.scope
+        return 'Scope(%r, is_iterable=%r)' % (self.scope, self.is_iterable)
 
     def resolve(self, context):
         """

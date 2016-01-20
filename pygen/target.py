@@ -36,24 +36,26 @@ class Target(object):
         if not self.scopes:
             yield context
         else:
-            aliased_context = {
+            resolved_scopes = {
                 alias: scope.resolve(context=context)
                 for alias, scope in self.scopes.items()
             }
 
-            axes, dimensions = list(zip(*[
-                (alias, list(scope))
-                for alias, scope in sorted(aliased_context.items())
-                if isinstance(scope, (set, list, tuple))
+            axes_dimensions = list(zip(*[
+                (alias, context)
+                for alias, context in sorted(resolved_scopes.items())
+                if self.scopes[alias].is_iterable
             ]))
 
-            if dimensions:
+            if axes_dimensions:
+                axes, dimensions = axes_dimensions
+
                 for dimension in product(*dimensions):
-                    scoped_context = aliased_context.copy()
+                    scoped_context = resolved_scopes.copy()
                     scoped_context.update(dict(zip(axes, dimension)))
                     yield scoped_context
             else:
-                yield aliased_context
+                yield resolved_scopes
 
     def get_template(self, environment):
         """
