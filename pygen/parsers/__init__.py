@@ -5,8 +5,12 @@ Common parser methods.
 import os
 import pkg_resources
 import warnings
+import requests
+import mimetypes
 
-from .exceptions import NoParserError
+from six.moves.urllib.parse import urlsplit
+
+from ..exceptions import NoParserError
 
 
 def get_parser_class_map():
@@ -25,23 +29,24 @@ def get_parser_class_map():
             )
             continue
 
-        for extension in class_.extensions:
-            if extension in result:
-                current_class = result[extension]
+        for mimetype in class_.mimetypes:
+            if mimetype in result:
+                current_class = result[mimetype]
 
                 if current_class != class_:
                     warnings.warn(
-                        "Could not register extension %r with parser %r as it "
+                        "Could not register mimetype %r with parser %r as it "
                         "is already registered with a different parser "
                         "(%r)." % (
-                            extension,
+                            mimetype,
                             class_,
                             current_class,
                         ),
                         RuntimeWarning,
                     )
             else:
-                result[extension] = class_
+                class_.register()
+                result[mimetype] = class_
 
     return result
 
@@ -49,23 +54,29 @@ def get_parser_class_map():
 parser_class_map = get_parser_class_map()
 
 
-def get_parser_from_file_name(file_name):
-    extension = os.path.splitext(file_name)[-1]
-    parser_class = parser_class_map.get(extension)
+def get_parser_for_type(mimetype):
+    parser_class = parser_class_map.get(mimetype)
 
     if not parser_class:
         raise NoParserError(
             filename=file_name,
-            extensions=set(parser_class_map),
+            mimetypes=set(parser_class_map),
         )
 
     return parser_class()
 
 
-def get_parser_from_file(file):
-    return get_parser_from_file_name(file_name=file.name)
+def read_context_from_url(url):
+    parts = urlsplit(url, scheme='file')
 
+    if parts.scheme == 'file':
+        mimetype, _ = mimetypes.guess_type(url)
+        parser = get_parser_for_type(mimetype)
 
-def parse_file(file):
-    parser = get_parser_from_file(file)
-    return parser.load(file)
+        with open(parts.path) as file:
+            return parser.load(file)
+    else:
+        result = requests.get(url)
+        mimetype = result.headers['Content-Type']
+        parser = get_parser_for_type(mimetype)
+        return parser.loads(result.text)

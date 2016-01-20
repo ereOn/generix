@@ -3,89 +3,55 @@ Templates.
 """
 
 import os
-import yaml
 
 from jinja2 import (
     Environment,
     FileSystemLoader,
 )
-from voluptuous import (
-    Any,
-    Required,
-    Schema,
-)
 
-from .scope import (
-    Scope,
-    parse_scope,
-)
+from .index import Index
+from .target import Target
+from .scope import Scope
 
 
-class TemplatesManager(object):
-    def __init__(self, root):
-        self.root = os.path.normpath(os.path.abspath(root))
-        self.loader = FileSystemLoader(self.root)
-        self.environment = Environment(
-            loader=self.loader,
+class Templates(object):
+    """
+    Represents a collection of templates and their index.
+    """
+    @classmethod
+    def from_path(cls, path):
+        path = os.path.normpath(os.path.abspath(path))
+        loader = FileSystemLoader(path)
+        environment = Environment(
+            loader=loader,
             keep_trailing_newline=True,
         )
 
-        # Read the index file.
-        index_data = yaml.load(open(os.path.join(self.root, 'index.yml')))
-        index_schema = Schema({
-            Required('targets', default={}): {
-                str: {
-                    'source': self.environment.get_template,
-                    'destination': self.environment.from_string,
-                    Required('scope', default=Scope()): parse_scope,
-                    Required('alias', default=None): Any(None, str),
-                },
-            },
-            Required('default_targets', default=[]): [str],
-        })
-        self.index = index_schema(index_data)
+        with open(os.path.join(path, 'index.yml')) as index_file:
+            index = Index.load(index_file)
 
-    @property
-    def default_targets(self):
-        targets = self.index['default_targets']
+        return cls(environment=environment, index=index)
 
-        if targets:
-            return {
-                target: value
-                for target, value in self.targets.items()
-                if target in targets
-            }
-        else:
-            return self.targets
-
-    @property
-    def targets(self):
-        return self.index['targets']
-
-    def render(self, target_name, definition):
+    def __init__(self, environment, index):
         """
-        Render a target according to a specified definition.
+        Initialize a new templates collection.
 
-        :param target_name: The target name.
-        :paran definition: The definition.
-        :yields: Tuples of (destination_file_name, content).
-
-        .. note::
-            Unless they are absolute, filenames are relative to the output
-            directory.
+        :param environment: The Jinja2 template environment.
+        :param index: The `Index` associated to those templates.
         """
-        target = self.targets[target_name]
-        source = target['source']
-        destination = target['destination']
-        scope = target['scope']
-        alias = target['alias']
-        context = scope.resolve(definition)
+        self.environment = environment
+        self.index = index
 
-        if not isinstance(context, (list, tuple)):
-            context = [context]
+    def generate(self, context):
+        """
+        Generator that yields all the rendered pairs for the targets, using the
+        specified context.
 
-        if alias:
-            context = [{alias: ctx} for ctx in context]
-
-        for kwargs in context:
-            yield destination.render(**kwargs), source.render(**kwargs)
+        :param context: The root context to use.
+        :yields: Triplets of (target_name, filename, content) for the targets.
+        """
+        for item in self.index.generate(
+            environment=self.environment,
+            context=context,
+        ):
+            yield item

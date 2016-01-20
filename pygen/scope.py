@@ -7,31 +7,28 @@ import re
 from .exceptions import InvalidScope
 
 
-def parse_scope(value):
-    """
-    Creates a `Scope` instance from a dotted path string.
-
-    :param value: The dotted path string.
-    :returns: A `Scope` instance if `value` is a valid path.
-    """
-    if not value:
-        return Scope()
-
-    if not re.match('^[\w\d_-]+(\.[\w\d_-]+)*$', value):
-        raise InvalidScope(value)
-
-    scope = [
-        int(x) if re.match('^\d+$', x) else x
-        for x in value.split('.')
-    ]
-
-    return Scope(scope=scope)
-
-
 class Scope(object):
     """
     Represents a scope.
     """
+    @classmethod
+    def from_string(cls, value):
+        """
+        Creates a `Scope` instance from a dotted path string.
+
+        :param value: The dotted path string.
+        :returns: A `Scope` instance if `value` is a valid path.
+        """
+        if not re.match('^([\w\d_-]+(\.[\w\d_-]+)*)?$', value):
+            raise InvalidScope(value)
+
+        scope = [
+            int(x) if re.match('^\d+$', x) else x
+            for x in value.split('.') if x
+        ]
+
+        return cls(scope=scope)
+
     def __init__(self, scope=None):
         """
         Creates a new scope.
@@ -48,6 +45,9 @@ class Scope(object):
 
     def __ne__(self, other):
         return not self == other
+
+    def __str__(self):
+        return '.'.join(self.scope)
 
     def __repr__(self):
         return 'Scope(%r)' % self.scope

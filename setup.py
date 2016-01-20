@@ -28,6 +28,7 @@ pygen is a flexible and extensible code generator tool.
         'PyYAML==3.11',
         'voluptuous==0.8.8',
         'colorama==0.3.6',
+        'requests==2.9.1',
     ],
     entry_points={
         'console_scripts': [

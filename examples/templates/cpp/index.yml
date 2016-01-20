@@ -1,7 +1,6 @@
 targets:
   header:
-    source: header.hpp
-    destination: "{{ class.name | capitalize }}.hpp"
-    scope: classes
-    alias: class
-
+    template_name: header.hpp
+    filename: "{{ class.name | capitalize }}.hpp"
+    scopes:
+      class: classes

@@ -4,4 +4,11 @@ The base parser.
 
 
 class BaseParser(object):
-    pass
+    @classmethod
+    def register(cls):
+        """
+        Called when the class is first registerd.
+
+        Typically used to register new mimetypes in the `mimetypes` module.
+        """
+        pass
