@@ -59,7 +59,7 @@ def get_parser_for_type(mimetype):
 
     if not parser_class:
         raise NoParserError(
-            filename=file_name,
+            mimetype=mimetype,
             mimetypes=set(parser_class_map),
         )
 
@@ -77,6 +77,6 @@ def read_context_from_url(url):
             return parser.load(file)
     else:
         result = requests.get(url)
-        mimetype = result.headers['Content-Type']
+        mimetype = result.headers['Content-Type'].split(';')[0]
         parser = get_parser_for_type(mimetype)
         return parser.loads(result.text)
