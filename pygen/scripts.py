@@ -7,7 +7,7 @@ import os
 import yaml
 
 from .parsers import read_context_from_url
-from .templates import Templates
+from .index import Index
 
 
 def hl(obj):
@@ -51,18 +51,18 @@ def pdebug(msg, *args, **kwargs):
     "is specified, the default targets are used. If no default targets are "
     "defined, all targets are used.",
 )
-@click.argument('templates-path', type=click.Path(exists=True))
+@click.argument('index-file', type=click.File())
 @click.argument('context-url', type=click.Path(dir_okay=False))
-def pygen(debug, output_root, targets, templates_path, context_url):
+def pygen(debug, output_root, targets, index_file, context_url):
     context = read_context_from_url(context_url)
-    templates = Templates.from_path(templates_path)
+    index = Index.load(cwd=os.path.dirname(index_file.name), stream=index_file)
 
     try:
         os.makedirs(output_root)
     except OSError:
         pass
 
-    for target_name, filename, content in templates.generate(context=context):
+    for target_name, filename, content in index.generate(context=context):
         output_filename = os.path.join(output_root, filename)
 
         pinfo(

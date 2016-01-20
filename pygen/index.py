@@ -2,8 +2,14 @@
 Index class.
 """
 
+import os
 import yaml
 
+from jinja2 import (
+    Environment,
+    PrefixLoader,
+    FileSystemLoader,
+)
 from voluptuous import (
     Required,
     Schema,
@@ -18,9 +24,17 @@ class Index(object):
     An index is a collection of targets.
     """
     @classmethod
-    def load(cls, stream):
+    def load(cls, cwd, stream):
+        """
+        Load an index from a stream.
+        :param cwd: The current directory. Used to resolve relative template
+            paths.
+        :param stream: A file-object to use as the source for the index.
+        :returns: An `Index` instance.
+        """
         data = yaml.load(stream)
         schema = Schema({
+            Required('template_paths', default={}): {str: str},
             Required('targets', default={}): {
                 str: {
                     'template_name': str,
@@ -31,32 +45,43 @@ class Index(object):
                 },
             },
         })
+        parsed_data = schema(data)
+
+        loader = PrefixLoader({
+            prefix: FileSystemLoader(os.path.join(cwd, path))
+            for prefix, path in parsed_data['template_paths'].items()
+        })
+        environment = Environment(
+            loader=loader,
+            keep_trailing_newline=True,
+        )
         targets = {
             target_name: Target(**target)
-            for target_name, target in schema(data)['targets'].items()
+            for target_name, target in parsed_data['targets'].items()
         }
-        return cls(targets=targets)
+        return cls(environment=environment, targets=targets)
 
-    def __init__(self, targets):
+    def __init__(self, environment, targets):
         """
         Initialize a new index.
 
+        :param environment: The Jinja2 template environment.
         :param targets: A dictionary of targets indexed by their names.
         """
+        self.environment = environment
         self.targets = targets
 
-    def generate(self, environment, context):
+    def generate(self, context):
         """
         Generator that yields all the rendered pairs for the targets, using the
-        specified environment and context.
+        specified context.
 
-        :param environment: The Jinja2 template environment.
         :param context: The root context to use.
         :yields: Triplets of (target_name, filename, content) for the targets.
         """
         for target_name, target in self.targets.items():
             for filename, content in target.generate(
-                environment=environment,
+                environment=self.environment,
                 context=context,
             ):
                 yield target_name, filename, content
