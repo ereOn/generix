@@ -51,7 +51,7 @@ class Scope(object):
         return not self == other
 
     def __str__(self):
-        return '.'.join(self.scope)
+        return '.'.join(self.scope + ([''] * 3 if self.is_iterable else []))
 
     def __repr__(self):
         return 'Scope(%r, is_iterable=%r)' % (self.scope, self.is_iterable)
