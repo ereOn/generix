@@ -21,6 +21,10 @@ class ScopeTests(TestCase):
         scope = Scope.from_string('foo.bar')
         self.assertEqual(Scope(scope=['foo', 'bar']), scope)
 
+    def test_from_string_multiple_identifiers_ellipsis(self):
+        scope = Scope.from_string('foo.bar...')
+        self.assertEqual(Scope(scope=['foo', 'bar'], is_iterable=True), scope)
+
     def test_from_string_single_number(self):
         scope = Scope.from_string('2')
         self.assertEqual(Scope(scope=[2]), scope)
