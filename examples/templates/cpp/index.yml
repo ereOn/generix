@@ -1,8 +1,0 @@
-template_paths:
-  '': ''
-targets:
-  header:
-    template_name: /header.hpp
-    filename: "{{ class.name | capitalize }}.hpp"
-    scopes:
-      class: classes...

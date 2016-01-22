@@ -47,10 +47,16 @@ class Index(object):
         })
         parsed_data = schema(data)
 
-        loader = PrefixLoader({
-            prefix: FileSystemLoader(os.path.join(cwd, path))
-            for prefix, path in parsed_data['template_paths'].items()
-        })
+        template_paths = parsed_data['template_paths']
+
+        if template_paths:
+            loader = PrefixLoader({
+                prefix: FileSystemLoader(os.path.join(cwd, path))
+                for prefix, path in template_paths.items()
+            })
+        else:
+            loader = FileSystemLoader(cwd)
+
         environment = Environment(
             loader=loader,
             keep_trailing_newline=True,

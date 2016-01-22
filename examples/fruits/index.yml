@@ -1,0 +1,4 @@
+targets:
+  fruit_list:
+    template_name: fruit_list.txt.tpl
+    filename: fruit_list.txt
