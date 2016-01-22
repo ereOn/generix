@@ -2,7 +2,6 @@
 Common parser methods.
 """
 
-import os
 import pkg_resources
 import warnings
 import requests

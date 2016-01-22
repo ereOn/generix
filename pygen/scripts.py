@@ -4,7 +4,6 @@ Command line scripts.
 
 import click
 import os
-import yaml
 
 from .parsers import read_context_from_url
 from .index import Index
