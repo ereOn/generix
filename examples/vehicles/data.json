@@ -1,0 +1,24 @@
+{
+  "items": [
+    {
+      "name": "Ford Focus",
+      "weight": 350
+    },
+    {
+      "name": "Airbus A320",
+      "weight": 4550
+    },
+    {
+      "name": "School bus",
+      "weight": 600
+    },
+    {
+      "name": "Bicycle",
+      "weight": 20
+    },
+    {
+      "name": "Skateboard",
+      "weight": 3
+    }
+  ]
+}

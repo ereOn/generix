@@ -1,0 +1,11 @@
+targets:
+  big_vehicles:
+    template_name: big_vehicles.html.tpl
+    filename: big_vehicles.html
+    scopes:
+      vehicles: items
+  small_vehicles:
+    template_name: small_vehicles.html.tpl
+    filename: small_vehicles.html
+    scopes:
+      vehicles: items
