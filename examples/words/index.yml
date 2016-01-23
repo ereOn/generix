@@ -1,0 +1,7 @@
+targets:
+  words:
+    template_name: words.py.tpl
+    filename: words_{{ adjective }}_{{ name }}.py
+    scopes:
+      adjective: data.adjectives...
+      name: data.names...
