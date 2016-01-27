@@ -42,8 +42,8 @@ class Target(object):
             }
 
             axes_dimensions = list(zip(*[
-                (alias, context)
-                for alias, context in sorted(resolved_scopes.items())
+                (alias, ctx)
+                for alias, ctx in sorted(resolved_scopes.items())
                 if self.scopes[alias].is_iterable
             ]))
 
