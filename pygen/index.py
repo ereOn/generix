@@ -84,8 +84,11 @@ class Index(object):
 
         :param context: The root context to use.
         :yields: Triplets of (target_name, filename, content) for the targets.
+
+        .. note::
+            Targets are picked in alphabetical order.
         """
-        for target_name, target in self.targets.items():
+        for target_name, target in sorted(self.targets.items()):
             for filename, content in target.generate(
                 environment=self.environment,
                 context=context,

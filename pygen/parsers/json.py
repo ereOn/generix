@@ -19,8 +19,8 @@ class JsonParser(BaseParser):
 
     @classmethod
     def register(cls):
-        for mimetype in cls.mimetypes:
-            for extension in cls.extensions:
+        for mimetype in sorted(cls.mimetypes):
+            for extension in sorted(cls.extensions):
                 mimetypes.add_type(mimetype, extension)
 
     def load(self, file):
