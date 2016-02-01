@@ -1,0 +1,6 @@
+targets:
+  target:
+    template_name: whatever.txt.tpl
+    filename: whatever.txt
+    scopes:
+      invalid: some characters are not $ allowed

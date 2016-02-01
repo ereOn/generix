@@ -11,4 +11,3 @@ class BaseParser(object):
 
         Typically used to register new mimetypes in the `mimetypes` module.
         """
-        pass
