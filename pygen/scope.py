@@ -19,15 +19,23 @@ class Scope(object):
         :param value: The dotted path string.
         :returns: A `Scope` instance if `value` is a valid path.
         """
-        if not re.match('^([\w\d_-]+(\.[\w\d_-]+)*(\.\.\.)?)?$', value):
-            raise InvalidScope(value)
+        is_iterable = value.endswith('...')
 
-        scope = [
-            int(x) if re.match('^\d+$', x) else x
-            for x in value.split('.') if x
-        ]
+        if is_iterable:
+            value = value[:-3]
 
-        return cls(scope=scope, is_iterable=value.endswith('...'))
+        if value:
+            if not re.match('^[\w\d_-]+(\.[\w\d_-]+)*$', value):
+                raise InvalidScope(value)
+
+            scope = [
+                int(x) if re.match('^\d+$', x) else x
+                for x in value.split('.')
+            ]
+        else:
+            scope = []
+
+        return cls(scope=scope, is_iterable=is_iterable)
 
     def __init__(self, scope=None, is_iterable=False):
         """
@@ -51,10 +59,23 @@ class Scope(object):
         return not self == other
 
     def __str__(self):
-        return '.'.join(self.scope + ([''] * 3 if self.is_iterable else []))
+        result = '.'.join(self.scope)
+
+        if self.is_iterable:
+            result += '...'
+
+        return result
 
     def __repr__(self):
-        return 'Scope(%r, is_iterable=%r)' % (self.scope, self.is_iterable)
+        args = []
+
+        if self.scope:
+            args.append(repr(self.scope))
+
+        if self.is_iterable:
+            args.append('is_iterable=%r' % self.is_iterable)
+
+        return 'Scope(%s)' % ', '.join(args)
 
     def resolve(self, context):
         """
