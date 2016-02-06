@@ -12,10 +12,10 @@ setup(
     version=open('VERSION').read().strip(),
     url='http://ereOn.github.io/pygen',
     description=(
-        "A flexible code generator tool."
+        "A versatile and extensible file generation tool."
     ),
     long_description="""\
-pygen is a flexible and extensible code generator tool.
+pygen is a versatile and extensible file generation tool.
 """,
     packages=find_packages(exclude=[
         'tests',
