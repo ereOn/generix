@@ -9,16 +9,8 @@ from .parsers import read_context_from_url
 from .index import Index
 
 
-def hl(obj):
-    return click.style(str(obj), fg='yellow', bold=True)
-
-
 def pinfo(msg, *args, **kwargs):
     click.secho(str(msg).format(*args, **kwargs), fg='white')
-
-
-def pdebug(msg, *args, **kwargs):
-    click.secho(str(msg).format(*args, **kwargs), fg='black', bold=True)
 
 
 @click.command(
