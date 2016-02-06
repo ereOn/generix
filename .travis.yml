@@ -2,12 +2,6 @@ language: python
 python:
 - '3.5'
 sudo: false
-env:
-  matrix:
-  - TOXENV=pep8
-  - TOXENV=py27
-  - TOXENV=py34
-  - TOXENV=py35
 install:
 - pip install tox
 - pip install coveralls
