@@ -7,12 +7,17 @@
 [![PyPi downloads](https://img.shields.io/pypi/dm/pygen.svg)](https://pypi.python.org/pypi/pygen/1.0.0)
 
 # PyGen
-**PyGen** is a flexible and extensible code generation tool.
+
+**PyGen** is a versatile and extensible file generation tool.
 
 ## Installation
 
-Just type:
+**PyGen** operates as a command-line tool, pygen provided via Python entry
+points.
+
+You may install it by using `pip`:
 
 > pip install pygen
 
-That's it.
+The `pygen` command will then be available to you, provided that the Python’s
+scripts directory is in your `PATH`.
