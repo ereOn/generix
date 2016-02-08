@@ -2,10 +2,11 @@
 Common parser methods.
 """
 
-import pkg_resources
-import warnings
-import requests
 import mimetypes
+import os
+import pkg_resources
+import requests
+import warnings
 
 from six.moves.urllib.parse import urlsplit
 
@@ -66,6 +67,9 @@ def get_parser_for_type(mimetype):
 
 
 def read_context_from_url(url):
+    if os.path.isabs(url):
+        url = 'file:' + url
+
     parts = urlsplit(url, scheme='file')
 
     if parts.scheme == 'file':
