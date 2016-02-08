@@ -3,6 +3,7 @@ Command line scripts.
 """
 
 import click
+import io
 import os
 
 from .parsers import read_context_from_url
@@ -62,5 +63,5 @@ def pygen(debug, output_root, targets, index_file, context_url):
             filename=output_filename,
         )
 
-        with open(output_filename, 'w') as file:
+        with io.open(output_filename, 'w', newline='') as file:
             file.write(content)
