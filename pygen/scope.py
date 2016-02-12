@@ -85,6 +85,14 @@ class Scope(object):
         :returns: The resolved context.
         """
         if self.scope:
-            return Scope(scope=self.scope[1:]).resolve(context[self.scope[0]])
+            try:
+                return Scope(scope=self.scope[1:]).resolve(
+                    context[self.scope[0]]
+                )
+            except TypeError:
+                try:
+                    return getattr(context, self.scope[0])
+                except:
+                    raise ValueError()
         else:
             return context
