@@ -72,3 +72,17 @@ def test_resolve():
     }
     scope = Scope(['a', 'b'])
     assert scope.resolve(context) == 'c'
+
+
+def test_resolve_with_attributes():
+    class A(object):
+        a = 'a'
+
+        def __init__(self):
+            self.b = 'b'
+
+    scope = Scope(['a'])
+    assert scope.resolve(A()) == 'a'
+
+    scope = Scope(['b'])
+    assert scope.resolve(A()) == 'b'
