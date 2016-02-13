@@ -77,6 +77,13 @@ class Scope(object):
 
         return 'Scope(%s)' % ', '.join(args)
 
+    @staticmethod
+    def resolve_one(context, component):
+        try:
+            return context[component]
+        except TypeError:
+            return getattr(context, component)
+
     def resolve(self, context):
         """
         Resolve the scope into the specified context.
@@ -85,6 +92,8 @@ class Scope(object):
         :returns: The resolved context.
         """
         if self.scope:
-            return Scope(scope=self.scope[1:]).resolve(context[self.scope[0]])
+            return Scope(scope=self.scope[1:]).resolve(
+                self.resolve_one(context, self.scope[0]),
+            )
         else:
             return context

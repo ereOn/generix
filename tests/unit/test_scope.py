@@ -72,3 +72,14 @@ def test_resolve():
     }
     scope = Scope(['a', 'b'])
     assert scope.resolve(context) == 'c'
+
+
+def test_resolve_attributes():
+    class Context(object):
+        def __init__(self, **kwargs):
+            for key, value in kwargs.items():
+                setattr(self, key, value)
+
+    context = Context(a=Context(b='c'))
+    scope = Scope(['a', 'b'])
+    assert scope.resolve(context) == 'c'
