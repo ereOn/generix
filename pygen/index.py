@@ -17,6 +17,7 @@ from voluptuous import (
 
 from .scope import Scope
 from .target import Target
+from .filters import get_filters
 
 
 class Index(object):
@@ -67,6 +68,15 @@ class Index(object):
         }
         return cls(environment=environment, targets=targets)
 
+    @staticmethod
+    def register_builtin_filters(environment):
+        """
+        Register the built-in filters into the specified environment.
+
+        :param environment: The Jinja2 environment.
+        """
+        environment.filters.update(get_filters())
+
     def __init__(self, environment, targets):
         """
         Initialize a new index.
@@ -76,6 +86,7 @@ class Index(object):
         """
         self.environment = environment
         self.targets = targets
+        self.register_builtin_filters(self.environment)
 
     def generate(self, context):
         """

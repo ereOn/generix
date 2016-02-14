@@ -41,6 +41,7 @@ def compare_folders(left, right):
     ('examples/fruits', 'index.yml', 'data.yml'),
     ('examples/vehicles', 'index.yml', 'data.json'),
     ('examples/words', 'index.yml', 'data.yml'),
+    ('examples/classes', 'index.yml', 'data.yml'),
 ])
 def test_examples(tmpdir, runner, index_file, data_file):
     result = runner(index_file, data_file, '-o', tmpdir.join('output'))

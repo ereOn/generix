@@ -1,0 +1,11 @@
+targets:
+  header:
+    template_name: 'class.hpp.tpl'
+    filename: '{{ class.name | snake_case }}.hpp'
+    scopes:
+      class: classes...
+  source:
+    template_name: 'class.cpp.tpl'
+    filename: '{{ class.name | snake_case }}.cpp'
+    scopes:
+      class: classes...

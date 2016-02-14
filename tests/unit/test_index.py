@@ -86,7 +86,8 @@ def test_generate():
         ('bar1', 'mybar1'),
     )
     context = {}
-    index = Index(environment=MagicMock(spec=Environment), targets=targets)
+    environment = Environment()
+    index = Index(environment=environment, targets=targets)
     result = list(index.generate(context=context))
 
     assert result == [

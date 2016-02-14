@@ -1,0 +1,11 @@
+classes:
+  - name: User
+    fields:
+      - name: age
+        type: int
+      - name: name
+        type: std::string
+  - name: UserAccount
+    fields:
+      - name: id
+        type: int
